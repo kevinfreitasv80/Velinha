@@ -1,16 +1,30 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styles from "./Candle.module.css";
 
-export default function Candle() {
-  const [blink, setBlink] = useState(false);
-  const TIME2BLINK = 3000;
+type CandleProps = {
+  size: number;
+};
 
-  setInterval(() => {
-    setBlink(!blink);
-  }, TIME2BLINK);
+export default function Candle(props: CandleProps) {
+  const [blink, setBlink] = useState(false);
+  const [isOpen, setIsOpen] = useState(true);
+  const TIME2BLINK = 250;
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setBlink(true);
+      setIsOpen(!isOpen);
+
+      setTimeout(() => {
+        setBlink(false);
+      }, TIME2BLINK);
+    }, 3000);
+
+    return () => clearTimeout(timeout);
+  }, [isOpen]);
 
   return (
-    <div className={styles.body}>
+    <div className={styles.body} style={{ height: `${props.size * 6}em` }}>
       <div className={styles.top}>
         <div className={styles.container}>
           <div className={`${styles.red} ${styles.flame}`}></div>

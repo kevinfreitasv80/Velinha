@@ -1,15 +1,145 @@
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import Candle from "@/components/Candle/Candle";
+import { TimerPickerModal } from "react-native-timer-picker";
+import { useState, useEffect, useRef } from "react";
+// import { Play, Pause } from "lucide-react-native";
 
 export default function Home() {
+  const [showPicker, setShowPicker] = useState(true);
+  const [totalSeconds, setTotalSeconds] = useState(0);
+  const [sizeCandle, setSizeCandle] = useState(0);
+  const [remainingSeconds, setRemainingSeconds] = useState(0);
+  const [isRunning, setIsRunning] = useState(false);
+
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  function formatNumber(num: number) {
+    return num.toString().padStart(2, "0");
+  }
+
+  function formatTime(seconds: number) {
+    const hrs = Math.floor(seconds / 3600);
+    const mins = Math.floor((seconds % 3600) / 60);
+    const secs = seconds % 60;
+
+    return `${formatNumber(hrs)}:${formatNumber(mins)}:${formatNumber(secs)}`;
+  }
+
+  useEffect(() => {
+    if (isRunning) {
+      intervalRef.current = setInterval(() => {
+        setRemainingSeconds((prev) => {
+          if (prev <= 1) {
+            clearInterval(intervalRef.current!);
+            setIsRunning(false);
+            setSizeCandle(0);
+            return 0;
+          }
+
+          setSizeCandle(prev - 1);
+          return prev - 1;
+        });
+      }, 1000);
+    }
+
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
+  }, [isRunning]);
+
+  function handleStartStop() {
+    if (remainingSeconds === 0) return;
+    setIsRunning((prev) => !prev);
+  }
+
+  function handleReset() {
+    setIsRunning(false);
+    setRemainingSeconds(totalSeconds);
+  }
+
+  function handleNewTime() {
+    setIsRunning(false);
+    setShowPicker(true);
+    setRemainingSeconds(totalSeconds);
+  }
+
   return (
-    <View>
-      <Candle />
-      <View>
-        <Text>00</Text>
-        <Text>:</Text>
-        <Text>00</Text>
+    <View style={styles.container}>
+      <Candle size={sizeCandle} />
+
+      <Text style={styles.timerText} onPress={handleNewTime}>
+        {formatTime(remainingSeconds)}
+      </Text>
+
+      <TimerPickerModal
+        closeOnOverlayPress
+        modalTitle="Set Timer"
+        onCancel={() => setShowPicker(false)}
+        onConfirm={(pickedDuration) => {
+          const total =
+            (pickedDuration.hours || 0) * 3600 +
+            (pickedDuration.minutes || 0) * 60 +
+            (pickedDuration.seconds || 0);
+
+          setTotalSeconds(total);
+          setRemainingSeconds(total);
+          setShowPicker(false);
+        }}
+        setIsVisible={setShowPicker}
+        visible={showPicker}
+      />
+
+      <View style={styles.buttonsContainer}>
+        <TouchableOpacity style={styles.button} onPress={handleStartStop}>
+          <Text style={styles.buttonText}>
+            {/* {isRunning ? <Pause /> : <Play />} */}
+          </Text>
+          <Text style={styles.buttonText}>{isRunning ? "Stop" : "Start"}</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.resetButton} onPress={handleReset}>
+          <Text style={styles.buttonText}>Reset</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    fontFamily: "Star Cartoon",
+  },
+  timerText: {
+    fontSize: 48,
+    fontWeight: "bold",
+    marginVertical: 20,
+  },
+
+  buttonsContainer: {
+    flexDirection: "row",
+    gap: 15,
+  },
+
+  button: {
+    backgroundColor: "#4CAF50",
+    paddingVertical: 12,
+    paddingHorizontal: 25,
+    borderRadius: 10,
+  },
+
+  resetButton: {
+    backgroundColor: "#f44336",
+    paddingVertical: 12,
+    paddingHorizontal: 25,
+    borderRadius: 10,
+  },
+
+  buttonText: {
+    color: "#fff",
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+});

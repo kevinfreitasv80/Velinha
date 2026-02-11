@@ -79,9 +79,7 @@
 .body {
   background: #e2e3df;
   width: 2em;
-  height: 6em;
-  top: 10em;
-  left: 10em;
+  transition: 0.4s;
   position: relative;
   border-radius: 0 0 0.4em 0.4em;
 }
@@ -119,6 +117,7 @@
   background: #aaa;
   width: 100%;
   z-index: 3;
+  transition: ease-in-out 250ms;
 }
 
 .pupil {
