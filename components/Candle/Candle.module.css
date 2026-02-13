@@ -82,6 +82,7 @@
   transition: 0.4s;
   position: relative;
   border-radius: 0 0 0.4em 0.4em;
+  box-shadow: 0 0 5em 2em rgba(255, 136, 0, 0.801);
 }
 .top {
   position: absolute;

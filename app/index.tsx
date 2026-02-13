@@ -1,17 +1,18 @@
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
 import Candle from "@/components/Candle/Candle";
 import { TimerPickerModal } from "react-native-timer-picker";
 import { useState, useEffect, useRef } from "react";
-// import { Play, Pause } from "lucide-react-native";
+import { Play, Pause, RotateCcw } from "lucide-react-native";
+// import background from "@/assets/images/bg.jpg";
+// import styleFont from "@/assets/fonts/Font.module.css";
 
 export default function Home() {
   const [showPicker, setShowPicker] = useState(true);
   const [totalSeconds, setTotalSeconds] = useState(0);
-  const [sizeCandle, setSizeCandle] = useState(0);
   const [remainingSeconds, setRemainingSeconds] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
 
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   function formatNumber(num: number) {
     return num.toString().padStart(2, "0");
@@ -32,11 +33,9 @@ export default function Home() {
           if (prev <= 1) {
             clearInterval(intervalRef.current!);
             setIsRunning(false);
-            setSizeCandle(0);
             return 0;
           }
 
-          setSizeCandle(prev - 1);
           return prev - 1;
         });
       }, 1000);
@@ -65,7 +64,7 @@ export default function Home() {
 
   return (
     <View style={styles.container}>
-      <Candle size={sizeCandle} />
+      <Candle size={remainingSeconds / totalSeconds} />
 
       <Text style={styles.timerText} onPress={handleNewTime}>
         {formatTime(remainingSeconds)}
@@ -90,14 +89,20 @@ export default function Home() {
       />
 
       <View style={styles.buttonsContainer}>
-        <TouchableOpacity style={styles.button} onPress={handleStartStop}>
-          <Text style={styles.buttonText}>
-            {/* {isRunning ? <Pause /> : <Play />} */}
-          </Text>
+        <TouchableOpacity
+          style={styles.buttonStartStop}
+          onPress={handleStartStop}
+        >
+          {isRunning ? (
+            <Pause color={"#fff"} style={{ marginRight: 10 }} />
+          ) : (
+            <Play color={"#fff"} style={{ marginRight: 10 }} />
+          )}
           <Text style={styles.buttonText}>{isRunning ? "Stop" : "Start"}</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.resetButton} onPress={handleReset}>
+          <RotateCcw style={{ marginRight: 10 }} color={"#fff"} />
           <Text style={styles.buttonText}>Reset</Text>
         </TouchableOpacity>
       </View>
@@ -110,8 +115,9 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    fontFamily: "Star Cartoon",
+    //backgroundImage: background,
   },
+
   timerText: {
     fontSize: 48,
     fontWeight: "bold",
@@ -123,23 +129,30 @@ const styles = StyleSheet.create({
     gap: 15,
   },
 
-  button: {
+  buttonStartStop: {
     backgroundColor: "#4CAF50",
     paddingVertical: 12,
     paddingHorizontal: 25,
-    borderRadius: 10,
+    borderRadius: 999,
+    flexDirection: "row",
+    alignItems: "center",
+    boxShadow: "inset 0 0 .35em white",
   },
 
   resetButton: {
     backgroundColor: "#f44336",
     paddingVertical: 12,
     paddingHorizontal: 25,
-    borderRadius: 10,
+    borderRadius: 999,
+    flexDirection: "row",
+    alignItems: "center",
+    boxShadow: "inset 0 0 .35em white",
   },
 
   buttonText: {
     color: "#fff",
     fontSize: 18,
     fontWeight: "bold",
+    alignItems: "center",
   },
 });
