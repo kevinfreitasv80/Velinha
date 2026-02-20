@@ -1,54 +1,84 @@
-import { useEffect, useState } from "react";
-import styles from "./Candle.module.css";
+import { useEffect, useRef, useState } from "react";
+import { styles } from "./styles";
+import { View, Animated, Easing } from "react-native";
 
 type CandleProps = {
   size: number;
 };
 
-export default function Candle(props: CandleProps) {
+export default function Candle({ size }: CandleProps) {
   const [blink, setBlink] = useState(false);
-  const [isOpen, setIsOpen] = useState(true);
-  const TIME2BLINK = 250;
 
+  // 🔥 animação da chama
+  const flicker = useRef(new Animated.Value(0)).current;
+
+  // 🔥 LOOP DA CHAMA (mais natural)
   useEffect(() => {
-    const timeout = setTimeout(() => {
+    const animate = () => {
+      Animated.timing(flicker, {
+        toValue: Math.random(),
+        duration: 80 + Math.random() * 150,
+        easing: Easing.linear,
+        useNativeDriver: true,
+      }).start(animate);
+    };
+
+    animate();
+  }, []);
+
+  // 👀 BLINK automático a cada 3s
+  useEffect(() => {
+    const interval = setInterval(() => {
       setBlink(true);
-      setIsOpen(!isOpen);
 
       setTimeout(() => {
         setBlink(false);
-      }, TIME2BLINK);
+      }, 250);
     }, 3000);
 
-    return () => clearTimeout(timeout);
-  }, [isOpen]);
+    return () => clearInterval(interval);
+  }, []);
+
+  // 🔥 interpolação da chama
+  const rotate = flicker.interpolate({
+    inputRange: [0, 1],
+    outputRange: ["-3deg", "3deg"],
+  });
+
+  const scaleY = flicker.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0.92, 1.08],
+  });
 
   return (
-    <div className={styles.body} style={{ height: `${props.size * 6}em` }}>
-      <div className={styles.top}>
-        <div className={styles.container}>
-          <div className={`${styles.red} ${styles.flame}`}></div>
-          <div className={`${styles.orange} ${styles.flame}`}></div>
-          <div className={`${styles.yellow} ${styles.flame}`}></div>
-          <div className={`${styles.white} ${styles.flame}`}></div>
-        </div>
-      </div>
-      <div className={styles.eyes}>
-        <div className={`${styles.eye} ${styles.L}`}>
-          <div
-            className={styles.eyelid}
-            style={{ height: blink ? "100%" : "0%" }}
-          ></div>
-          <div className={styles.pupil}></div>
-        </div>
-        <div className={`${styles.eye} ${styles.R}`}>
-          <div
-            className={styles.eyelid}
-            style={{ height: blink ? "100%" : "0%" }}
-          ></div>
-          <div className={styles.pupil}></div>
-        </div>
-      </div>
-    </div>
+    <View style={[styles.body, { height: size * 70 }]}>
+      <View style={styles.top}>
+        <Animated.View
+          style={[
+            styles.container,
+            {
+              transform: [{ rotate }, { scaleY }],
+            },
+          ]}
+        >
+          <View style={[styles.red, styles.flame]} />
+          <View style={[styles.orange, styles.flame]} />
+          <View style={[styles.yellow, styles.flame]} />
+          <View style={[styles.white, styles.flame]} />
+        </Animated.View>
+      </View>
+
+      <View style={styles.eyes}>
+        <View style={[styles.eye, styles.L]}>
+          <View style={[styles.eyelid, { height: blink ? "100%" : "0%" }]} />
+          <View style={styles.pupil} />
+        </View>
+
+        <View style={[styles.eye, styles.R]}>
+          <View style={[styles.eyelid, { height: blink ? "100%" : "0%" }]} />
+          <View style={styles.pupil} />
+        </View>
+      </View>
+    </View>
   );
 }

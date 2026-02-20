@@ -3,8 +3,6 @@ import Candle from "@/components/Candle/Candle";
 import { TimerPickerModal } from "react-native-timer-picker";
 import { useState, useEffect, useRef } from "react";
 import { Play, Pause, RotateCcw } from "lucide-react-native";
-// import background from "@/assets/images/bg.jpg";
-// import styleFont from "@/assets/fonts/Font.module.css";
 
 export default function Home() {
   const [showPicker, setShowPicker] = useState(true);
