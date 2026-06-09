@@ -1,23 +1,19 @@
-import { StyleSheet, Text, View } from "react-native";
+import { Character } from "@/components/Candle/Character";
+import { StyleSheet, View } from "react-native";
 
 export default function Home() {
     return (
         <View style={styles.container}>
-            <Text style={styles.text}>Guilherme</Text>
+            <Character isBlink={false} />
         </View>
     )
 }
 
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: "red",
         display: "flex",
         flex: 1,
         justifyContent: "center",
         alignItems: "center"
     },
-    text: {
-        color: "white",
-        fontSize: 30
-    }
 });
