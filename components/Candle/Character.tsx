@@ -4,12 +4,13 @@ import { styles } from './styles'; // Importando os estilos isolados
 interface CharacterProps {
   isBlink: boolean;
   surprised: boolean;
+  size: number;
 }
 
-export const Character: React.FC<CharacterProps> = ({ isBlink, surprised }) => {
+export const Character: React.FC<CharacterProps> = ({ isBlink, surprised, size }) => {
   return (
     <View style={styles.container}>
-      <View style={styles.body}>
+      <View style={[styles.body, {height: 192 * size}]}>
         
         {/* Olho esquerdo */}
         <View style={styles.eyeLeft}>

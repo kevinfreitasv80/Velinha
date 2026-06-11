@@ -8,7 +8,7 @@ export const styles = StyleSheet.create({
     borderWidth: 5,
     borderColor: '#000000',
     width: 96,          // Equivalente aproximado a 6em
-    height: 192,        // Equivalente aproximado a 12em
+    // height: 192,        // Equivalente aproximado a 12em
     borderRadius: 12,   // rounded-xl
     position: 'relative',
     backgroundColor: '#ffffff',

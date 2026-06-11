@@ -13,6 +13,10 @@ interface BtnProps extends PressableProps {
   borderColor?: string;
   icon?: LucideIcon;
   textSize?: number;
+  marginR?: number;
+  marginL?: number;
+  marginT?: number;
+  marginB?: number;
   func: () => void;
   /** Callback de som injetado pelo pai — chame playClick antes de func */
   onClickSound?: () => void;
@@ -26,15 +30,21 @@ export default function Button(props: BtnProps) {
 
   return (
     <TouchableOpacity
-      style={{
-        backgroundColor: props.background,
-        borderColor: props.borderColor,
-        borderWidth: props.borderSize,
-        borderRadius: props.rounded,
-        padding: props.padding,
-        paddingVertical: props.paddingY,
-        paddingHorizontal: props.paddingX,
-      }}
+      style={
+          {
+            backgroundColor: props.background,
+            borderColor: props.borderColor,
+            borderWidth: props.borderSize,
+            borderRadius: props.rounded,
+            padding: props.padding,
+            paddingVertical: props.paddingY,
+            paddingHorizontal: props.paddingX,
+            marginRight: props.marginR,
+            marginLeft: props.marginL,
+            marginTop: props.marginT,
+            marginBottom: props.marginB,
+          }
+        }
       className="cursor-pointer flex-row items-center"
       onPress={handlePress}
     >
@@ -44,6 +54,7 @@ export default function Button(props: BtnProps) {
           fontFamily: "MontserratAlternates_700Bold",
           fontSize: props.textSize,
           color: props.textColor,
+          fontWeight: "bold"
         }}
         className="text-center block"
       >
